@@ -1,6 +1,7 @@
 // import Axios from "axios";
 const gitPage = "https://api.github.com/users/";
 const me = "Cody-Hayes97";
+const follows = "/followers";
 /* Step 1: using axios, send a GET request to the following URL 
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
@@ -110,16 +111,33 @@ axios
     console.log(response);
     mainCards.appendChild(cardMaker(response.data));
   })
+  .then(response => {
+    axios
+      .get(gitPage + me + follows)
+      .then(response => {
+        console.log(response);
+        mainCards.appendChild(cardMaker(response.data[0]));
+      })
+      .catch(() => {
+        console.log("error");
+      });
+  })
   .catch(err => {
     console.log("error", err);
   });
 
 followersArray.forEach(item => {
-  axios.get(gitPage + item).then(response => {
-    console.log(response);
-    mainCards.appendChild(cardMaker(response.data));
-  });
+  axios
+    .get(gitPage + item)
+    .then(response => {
+      console.log(response);
+      mainCards.appendChild(cardMaker(response.data));
+    })
+    .catch(err => {
+      console.log("error", err);
+    });
 });
+
 /* 
  Using that array, iterate over it, requesting data for each user, creating a new card for each
   user, and adding that card to the DOM.
