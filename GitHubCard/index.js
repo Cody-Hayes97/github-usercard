@@ -1,3 +1,7 @@
+// import Axios from "axios";
+const gitPage = "https://api.github.com/users/";
+const me = "Cody-Hayes97";
+const follows = "/followers";
 /* Step 1: using axios, send a GET request to the following URL 
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
@@ -24,8 +28,6 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
-
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -43,10 +45,105 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
 
-/* List of LS Instructors Github username's: 
+function cardMaker(data) {
+  //create elems
+  const card = document.createElement("div");
+  const userImg = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const name = document.createElement("h3");
+  const username = document.createElement("p");
+  const location = document.createElement("p");
+  const profile = document.createElement("p");
+  const gitLink = document.createElement("a");
+  const followers = document.createElement("p");
+  const following = document.createElement("p");
+  const bio = document.createElement("p");
+
+  //structure
+  card.appendChild(userImg);
+  card.appendChild(cardInfo);
+
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+
+  profile.appendChild(gitLink);
+
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  //add class
+  card.classList.add("card");
+  cardInfo.classList.add("card-info");
+  name.classList.add("name");
+  username.classList.add("username");
+
+  //add context
+  userImg.setAttribute("src", data.avatar_url);
+  name.textContent = data.name;
+  username.textContent = data.login;
+  location.textContent = data.location;
+  gitLink.textContent = data.html_url;
+  followers.textContent = `followers: ${data.followers}`;
+  following.textContent = `following: ${data.following}`;
+  bio.textContent = `Bio: ${data.bio}`;
+
+  return card;
+}
+
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell"
+];
+
+const mainCards = document.querySelector(".cards");
+
+axios
+  .get(gitPage + me)
+  .then(response => {
+    console.log(response);
+    mainCards.appendChild(cardMaker(response.data));
+  })
+  .then(response => {
+    axios
+      .get(gitPage + me + follows)
+      .then(response => {
+        console.log(response);
+        mainCards.appendChild(cardMaker(response.data[0]));
+      })
+      .catch(() => {
+        console.log("error");
+      });
+  })
+  .catch(err => {
+    console.log("error", err);
+  });
+
+followersArray.forEach(item => {
+  axios
+    .get(gitPage + item)
+    .then(response => {
+      console.log(response);
+      mainCards.appendChild(cardMaker(response.data));
+    })
+    .catch(err => {
+      console.log("error", err);
+    });
+});
+
+/* 
+ Using that array, iterate over it, requesting data for each user, creating a new card for each
+  user, and adding that card to the DOM.
+
+
+List of LS Instructors Github username's: 
   tetondan
   dustinmyers
   justsml
